@@ -6,7 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -39,8 +39,8 @@ public class StoreEntity {
   private String category;
 
   @Column(nullable = false)
-  private LocalDateTime openTime;
+  private LocalTime openTime;
 
   @Column(nullable = false)
-  private LocalDateTime closeTime;
+  private LocalTime closeTime;
 }

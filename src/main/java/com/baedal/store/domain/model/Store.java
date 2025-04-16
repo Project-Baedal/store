@@ -1,6 +1,6 @@
 package com.baedal.store.domain.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -20,7 +20,7 @@ public class Store {
 
   private String category;
 
-  private LocalDateTime openTime;
+  private LocalTime openTime;
 
-  private LocalDateTime closeTime;
+  private LocalTime closeTime;
 }
