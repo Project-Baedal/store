@@ -1,9 +1,9 @@
 spring:
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/owner
-    username: owner
-    password: owner
+    url: jdbc:postgresql://localhost:5432/store
+    username: store
+    password: store
     driver-class-name: org.postgresql.Driver
 
 
@@ -15,3 +15,10 @@ spring:
         show_sql: true
         format_sql: true
 
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:10000
+    producer:
+      bootstrap-servers: localhost:10000
+server:
+  port: 8081
