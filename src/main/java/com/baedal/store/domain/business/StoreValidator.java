@@ -1,4 +1,4 @@
-package com.baedal.store.application.business;
+package com.baedal.store.domain.business;
 
 import java.time.LocalTime;
 import org.springframework.stereotype.Component;

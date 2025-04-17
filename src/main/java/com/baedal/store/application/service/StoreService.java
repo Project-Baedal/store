@@ -1,6 +1,6 @@
 package com.baedal.store.application.service;
 
-import com.baedal.store.application.business.StoreValidator;
+import com.baedal.store.domain.business.StoreValidator;
 import com.baedal.store.application.command.AddStoreCommand;
 import com.baedal.store.application.mapper.StoreApplicationMapper;
 import com.baedal.store.application.port.in.StoreUseCase;
