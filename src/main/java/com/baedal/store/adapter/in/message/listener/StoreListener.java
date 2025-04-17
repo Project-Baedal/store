@@ -1,6 +1,6 @@
-package com.baedal.store.adapter.in.web.message.listener;
+package com.baedal.store.adapter.in.message.listener;
 
-import com.baedal.store.adapter.in.web.mapper.StoreWebMapper;
+import com.baedal.store.adapter.in.message.mapper.StoreMessageMapper;
 import com.baedal.store.application.command.AddStoreCommand;
 import com.baedal.store.application.command.AddStoreRequest;
 import com.baedal.store.application.port.in.StoreUseCase;
@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class StoreListener {
 
   private final Converter converter;
-  private final StoreWebMapper mapper;
+  private final StoreMessageMapper mapper;
   private final StoreUseCase storeUseCase;
 
   @KafkaListener(topics = "store.addStore", groupId = "owner-group")
