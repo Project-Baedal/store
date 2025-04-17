@@ -16,23 +16,23 @@ import org.springframework.kafka.support.serializer.JsonDeserializer;
 @Configuration
 public class KafkaConfig {
 
-	@Value("${spring.kafka.producer.bootstrap-servers}")
-	private String bootstrapServers;
+  @Value("${spring.kafka.producer.bootstrap-servers}")
+  private String bootstrapServers;
 
-	@Bean
-	public ConsumerFactory<String, Object> consumerFactory() {
-		Map<String, Object> properties = new HashMap<>();
-		properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-		properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-		properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-		return new DefaultKafkaConsumerFactory<>(properties);
-	}
+  @Bean
+  public ConsumerFactory<String, Object> consumerFactory() {
+    Map<String, Object> properties = new HashMap<>();
+    properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+    properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+    properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+    return new DefaultKafkaConsumerFactory<>(properties);
+  }
 
-	@Bean
-	public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory() {
-		ConcurrentKafkaListenerContainerFactory<String, Object> factory =
-			new ConcurrentKafkaListenerContainerFactory<>();
-		factory.setConsumerFactory(consumerFactory());
-		return factory;
-	}
+  @Bean
+  public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory() {
+    ConcurrentKafkaListenerContainerFactory<String, Object> factory =
+        new ConcurrentKafkaListenerContainerFactory<>();
+    factory.setConsumerFactory(consumerFactory());
+    return factory;
+  }
 }

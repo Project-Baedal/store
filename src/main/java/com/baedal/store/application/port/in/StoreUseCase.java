@@ -4,5 +4,5 @@ import com.baedal.store.application.command.AddStoreCommand;
 
 public interface StoreUseCase {
 
-	void addStore(AddStoreCommand.Request req);
+  void addStore(AddStoreCommand.Request req);
 }
