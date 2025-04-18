@@ -8,5 +8,6 @@ import org.mapstruct.Mapper;
 public interface StorePersistenceMapper {
 
   StoreEntity toEntity(Store store);
+  Store toDomain(StoreEntity entity);
 
 }
