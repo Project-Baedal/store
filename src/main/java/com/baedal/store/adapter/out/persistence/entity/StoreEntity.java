@@ -9,6 +9,7 @@ import jakarta.persistence.Table;
 import java.time.LocalTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "stores")
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
 public class StoreEntity {
 
   @Id
@@ -43,4 +45,7 @@ public class StoreEntity {
 
   @Column(nullable = false)
   private LocalTime closeTime;
+
+  @Column(nullable = false)
+  private int deliveryAmount;
 }

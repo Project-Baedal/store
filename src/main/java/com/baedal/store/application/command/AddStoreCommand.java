@@ -19,6 +19,7 @@ public class AddStoreCommand {
     private String category;
     private LocalTime openTime;
     private LocalTime closeTime;
+    private int deliveryAmount;
 
   }
 

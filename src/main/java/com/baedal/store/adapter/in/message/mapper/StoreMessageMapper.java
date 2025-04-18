@@ -1,7 +1,7 @@
 package com.baedal.store.adapter.in.message.mapper;
 
 import com.baedal.store.application.command.AddStoreCommand;
-import com.baedal.store.application.command.AddStoreRequest;
+import com.baedal.store.adapter.in.message.dto.AddStoreRequest;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

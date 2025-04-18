@@ -5,4 +5,6 @@ import com.baedal.store.domain.model.Store;
 public interface StoreRepositoryPort {
 
   void save(Store store);
+
+  Store findById(Long storeId);
 }

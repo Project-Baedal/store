@@ -1,5 +1,6 @@
 package com.baedal.store.application.service;
 
+import com.baedal.store.application.command.DeliveryInfoCommand;
 import com.baedal.store.domain.business.StoreValidator;
 import com.baedal.store.application.command.AddStoreCommand;
 import com.baedal.store.application.mapper.StoreApplicationMapper;
@@ -27,5 +28,12 @@ public class StoreService implements StoreUseCase {
 
     Store store = mapper.addStoreToDomain(req);
     storeRepositoryPort.save(store);
+  }
+
+  @Override
+  public DeliveryInfoCommand.Response getDeliveryInfo(DeliveryInfoCommand.Request req) {
+
+    Store store = storeRepositoryPort.findById(req.getStoreId());
+    return mapper.getDeliveryInfoToResponse(store);
   }
 }
