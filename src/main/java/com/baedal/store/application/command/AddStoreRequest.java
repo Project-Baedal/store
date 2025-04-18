@@ -2,6 +2,7 @@ package com.baedal.store.application.command;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
 import java.time.LocalTime;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,6 +38,10 @@ public class AddStoreRequest {
   @Schema(description = "영업 종료 시간")
   @NotBlank
   private LocalTime closeTime;
+
+  @Schema(description = "배달비")
+  @PositiveOrZero
+  private int deliveryAmount;
 
 
 }

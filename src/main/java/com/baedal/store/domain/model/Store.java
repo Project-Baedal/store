@@ -23,4 +23,6 @@ public class Store {
   private LocalTime openTime;
 
   private LocalTime closeTime;
+
+  private int deliveryAmount;
 }
