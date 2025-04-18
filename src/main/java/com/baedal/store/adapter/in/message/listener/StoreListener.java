@@ -22,7 +22,7 @@ public class StoreListener {
 
   @KafkaListener(topics = "store.addStore", groupId = "owner-group")
   public void addStore(ConsumerRecord<String, String> record) {
-    Long ownerId = Long.parseLong(record.value());
+    Long ownerId = Long.parseLong(record.key());
     AddStoreRequest req = converter.jsonToDto(record.value(), AddStoreRequest.class);
     AddStoreCommand.Request command = mapper.addStoreToCommand(ownerId, req);
     storeUseCase.addStore(command);
