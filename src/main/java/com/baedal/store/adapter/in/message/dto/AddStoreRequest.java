@@ -1,4 +1,4 @@
-package com.baedal.store.application.command;
+package com.baedal.store.adapter.in.message.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

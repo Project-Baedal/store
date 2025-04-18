@@ -2,7 +2,7 @@ package com.baedal.store.adapter.in.message.listener;
 
 import com.baedal.store.adapter.in.message.mapper.StoreMessageMapper;
 import com.baedal.store.application.command.AddStoreCommand;
-import com.baedal.store.application.command.AddStoreRequest;
+import com.baedal.store.adapter.in.message.dto.AddStoreRequest;
 import com.baedal.store.application.port.in.StoreUseCase;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
