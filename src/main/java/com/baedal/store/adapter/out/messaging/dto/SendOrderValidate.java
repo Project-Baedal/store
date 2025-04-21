@@ -4,12 +4,16 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
 public class SendOrderValidate {
 
-  private String orderTransactionId;
+  private String domain;
   private boolean status;
   private String errorMessage;
 
-
+  @Builder
+  public SendOrderValidate(String errorMessage, boolean status) {
+    this.errorMessage = errorMessage;
+    this.status = status;
+    this.domain = "STORE";
+  }
 }

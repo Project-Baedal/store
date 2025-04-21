@@ -6,8 +6,6 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface StoreOutMessageMapper {
 
-  SendOrderValidate orderValidate(
-      String orderTransactionId, boolean status, String errorMessage
-  );
+  SendOrderValidate orderValidate(boolean status, String errorMessage);
 
 }

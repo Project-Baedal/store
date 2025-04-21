@@ -17,17 +17,13 @@ public class MessageSenderAdapter implements MessageSenderPort {
 
   @Override
   public void sendSuccessOrderValidate(String orderTransactionId) {
-    SendOrderValidate req = storeMapper.orderValidate(
-        orderTransactionId, true, null
-    );
-    kafkaSender.sendMessage("order.orderValidate", "store", req);
+    SendOrderValidate req = storeMapper.orderValidate(true, null);
+    kafkaSender.sendMessage("order.orderValidate", orderTransactionId, req);
   }
 
   @Override
   public void sendFailOrderValidate(String orderTransactionId, String errorMessage) {
-    SendOrderValidate req = storeMapper.orderValidate(
-        orderTransactionId, false, errorMessage
-    );
-    kafkaSender.sendMessage("order.orderValidate", "store", req);
+    SendOrderValidate req = storeMapper.orderValidate(false, errorMessage);
+    kafkaSender.sendMessage("order.orderValidate", orderTransactionId, req);
   }
 }
