@@ -46,9 +46,9 @@ public class StoreService implements StoreUseCase {
     try {
       Store store = storeRepositoryPort.findById(req.getStoreId());
       validator.validateDeliveryAmount(store, req.getDeliveryAmount());
-      messageSenderPort.sendSuccessOrderValidate();
+      messageSenderPort.sendSuccessOrderValidate(req.getOrderTransactionId());
     } catch (Exception e) {
-      messageSenderPort.sendFailOrderValidate(e.getMessage());
+      messageSenderPort.sendFailOrderValidate(req.getOrderTransactionId(), e.getMessage());
     }
   }
 }

@@ -1,7 +1,7 @@
 package com.baedal.store.adapter.out.messaging.adapter;
 
 import com.baedal.store.adapter.out.messaging.dto.SendOrderValidate;
-import com.baedal.store.adapter.out.messaging.mapper.StoreMessageMapper;
+import com.baedal.store.adapter.out.messaging.mapper.StoreOutMessageMapper;
 import com.baedal.store.adapter.out.messaging.sender.KafkaSender;
 import com.baedal.store.application.port.out.MessageSenderPort;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class MessageSenderAdapter implements MessageSenderPort {
 
   private final KafkaSender kafkaSender;
-  private final StoreMessageMapper storeMapper;
+  private final StoreOutMessageMapper storeMapper;
 
   @Override
   public void sendSuccessOrderValidate(String orderTransactionId) {

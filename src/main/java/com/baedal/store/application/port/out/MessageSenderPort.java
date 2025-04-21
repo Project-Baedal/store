@@ -2,7 +2,7 @@ package com.baedal.store.application.port.out;
 
 public interface MessageSenderPort {
 
-  void sendSuccessOrderValidate();
+  void sendSuccessOrderValidate(String orderTransactionId);
 
-  void sendFailOrderValidate(String errorMessage);
+  void sendFailOrderValidate(String orderTransactionId, String errorMessage);
 }
