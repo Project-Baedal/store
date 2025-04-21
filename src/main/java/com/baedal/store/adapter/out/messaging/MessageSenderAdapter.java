@@ -13,7 +13,7 @@ public class MessageSenderAdapter implements MessageSenderPort {
 
   @Override
   public void sendSuccessOrderValidate() {
-    kafkaSender.sendMessage("order.orderValidate", "store", "success");
+    kafkaSender.sendMessage("order.orderValidate", "store", "true");
   }
 
   @Override
