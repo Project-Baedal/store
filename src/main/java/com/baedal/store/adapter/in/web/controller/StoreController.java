@@ -3,6 +3,7 @@ package com.baedal.store.adapter.in.web.controller;
 import com.baedal.store.adapter.in.web.dto.response.DeliveryInfoResponse;
 import com.baedal.store.adapter.in.web.mapper.StoreWebMapper;
 import com.baedal.store.application.command.DeliveryInfoCommand;
+import com.baedal.store.application.command.ReviewInfoCommand;
 import com.baedal.store.application.port.in.StoreUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,5 +25,11 @@ public class StoreController {
     DeliveryInfoCommand.Request command = mapper.deliveryInfoToCommand(storeId);
     DeliveryInfoCommand.Response response = storeUseCase.getDeliveryInfo(command);
     return ResponseEntity.ok(mapper.deliveryInfoToResponse(response));
+  }
+
+  @GetMapping("/reviewInfo/{storeId}")
+  public ResponseEntity<?> reviewInfo(@PathVariable Long storeId) {
+    ReviewInfoCommand.Response response = storeUseCase.getReviewInfo(storeId);
+    return ResponseEntity.ok(response);
   }
 }

@@ -2,6 +2,7 @@ package com.baedal.store.application.mapper;
 
 import com.baedal.store.application.command.AddStoreCommand;
 import com.baedal.store.application.command.DeliveryInfoCommand;
+import com.baedal.store.application.command.ReviewInfoCommand;
 import com.baedal.store.domain.model.Store;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -13,4 +14,8 @@ public interface StoreApplicationMapper {
 
   @Mapping(target = "storeName", source = "name")
   DeliveryInfoCommand.Response getDeliveryInfoToResponse(Store store);
+
+  // 리뷰 정보 조회
+  @Mapping(target = "storeId", source = "id")
+  ReviewInfoCommand.Response getReviewInfoToResponse(Store store);
 }
