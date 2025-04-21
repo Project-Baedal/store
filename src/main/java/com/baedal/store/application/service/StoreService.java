@@ -1,6 +1,8 @@
 package com.baedal.store.application.service;
 
 import com.baedal.store.application.command.DeliveryInfoCommand;
+import com.baedal.store.application.command.ValidateOrderInfoCommand;
+import com.baedal.store.application.port.out.MessageSenderPort;
 import com.baedal.store.domain.business.StoreValidator;
 import com.baedal.store.application.command.AddStoreCommand;
 import com.baedal.store.application.mapper.StoreApplicationMapper;
@@ -18,6 +20,7 @@ public class StoreService implements StoreUseCase {
   private final StoreRepositoryPort storeRepositoryPort;
   private final StoreApplicationMapper mapper;
   private final StoreValidator validator;
+  private final MessageSenderPort messageSenderPort;
 
   @Override
   @Transactional
@@ -35,5 +38,17 @@ public class StoreService implements StoreUseCase {
 
     Store store = storeRepositoryPort.findById(req.getStoreId());
     return mapper.getDeliveryInfoToResponse(store);
+  }
+
+  @Override
+  public void validateStoreOrderInfo(ValidateOrderInfoCommand.Request req) {
+
+    try {
+      Store store = storeRepositoryPort.findById(req.getStoreId());
+      validator.validateDeliveryAmount(store, req.getDeliveryAmount());
+      messageSenderPort.sendSuccessOrderValidate();
+    } catch (Exception e) {
+      messageSenderPort.sendFailOrderValidate(e.getMessage());
+    }
   }
 }
