@@ -1,11 +1,13 @@
+server:
+  port: 8081
+
 spring:
-
-  datasource:
-    url: jdbc:postgresql://localhost:5433/store
-    username: store
-    password: store
-    driver-class-name: org.postgresql.Driver
-
+#
+#  datasource:
+#    url: jdbc:postgresql://localhost:5433/store
+#    username: store
+#    password: store
+#    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
@@ -20,5 +22,3 @@ spring:
       bootstrap-servers: localhost:10000
     producer:
       bootstrap-servers: localhost:10000
-server:
-  port: 8081
