@@ -21,7 +21,6 @@ public class StoreService implements StoreUseCase {
   private final StoreApplicationMapper mapper;
   private final StoreValidator validator;
 
-  @Override
   @Transactional
   public void addStore(AddStoreCommand.Request req) {
 
@@ -32,14 +31,14 @@ public class StoreService implements StoreUseCase {
     storeRepositoryPort.save(store);
   }
 
-  @Override
+  @Transactional(readOnly = true)
   public DeliveryInfoCommand.Response getDeliveryInfo(DeliveryInfoCommand.Request req) {
 
     Store store = storeRepositoryPort.findById(req.getStoreId());
     return mapper.getDeliveryInfoToResponse(store);
   }
 
-  @Override
+  @Transactional(readOnly = true)
   public ReviewInfoCommand.Response getReviewInfo(Long storeId) {
     Store store = storeRepositoryPort.findById(storeId);
     return mapper.getReviewInfoToResponse(store);
