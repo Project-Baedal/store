@@ -20,5 +20,6 @@ public interface StoreApplicationMapper {
   @Mapping(target = "storeId", source = "id")
   ReviewInfoCommand.Response getReviewInfoToResponse(Store store);
 
+  @Mapping(target = "storeId", source = "id")
   GetStoreDetailCommand getStoreDetailToResponse(Store store);
 }

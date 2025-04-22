@@ -8,7 +8,7 @@ import lombok.Getter;
 @Builder
 public class GetStoreDetailCommand {
 
-  private Long id;
+  private Long storeId;
 
   private String name;
 
