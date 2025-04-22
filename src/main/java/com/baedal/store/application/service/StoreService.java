@@ -2,6 +2,7 @@ package com.baedal.store.application.service;
 
 import com.baedal.store.application.command.AddStoreCommand;
 import com.baedal.store.application.command.DeliveryInfoCommand;
+import com.baedal.store.application.command.GetStoreDetailCommand;
 import com.baedal.store.application.command.ReviewInfoCommand;
 import com.baedal.store.application.mapper.StoreApplicationMapper;
 import com.baedal.store.application.port.in.StoreUseCase;
@@ -42,5 +43,11 @@ public class StoreService implements StoreUseCase {
   public ReviewInfoCommand.Response getReviewInfo(Long storeId) {
     Store store = storeRepositoryPort.findById(storeId);
     return mapper.getReviewInfoToResponse(store);
+  }
+
+  @Transactional(readOnly = true)
+  public GetStoreDetailCommand getStoreDetail(Long storeId) {
+    Store store = storeRepositoryPort.findById(storeId);
+    return mapper.getStoreDetailToResponse(store);
   }
 }
