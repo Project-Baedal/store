@@ -1,12 +1,12 @@
 package com.baedal.store.application.service;
 
-import com.baedal.store.application.command.DeliveryInfoCommand;
-import com.baedal.store.application.command.ReviewInfoCommand.Response;
-import com.baedal.store.domain.business.StoreValidator;
 import com.baedal.store.application.command.AddStoreCommand;
+import com.baedal.store.application.command.DeliveryInfoCommand;
+import com.baedal.store.application.command.ReviewInfoCommand;
 import com.baedal.store.application.mapper.StoreApplicationMapper;
 import com.baedal.store.application.port.in.StoreUseCase;
 import com.baedal.store.application.port.out.StoreRepositoryPort;
+import com.baedal.store.domain.business.StoreValidator;
 import com.baedal.store.domain.model.Store;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,7 +39,7 @@ public class StoreService implements StoreUseCase {
   }
 
   @Override
-  public Response getReviewInfo(Long storeId) {
+  public ReviewInfoCommand.Response getReviewInfo(Long storeId) {
     Store store = storeRepositoryPort.findById(storeId);
     return mapper.getReviewInfoToResponse(store);
   }

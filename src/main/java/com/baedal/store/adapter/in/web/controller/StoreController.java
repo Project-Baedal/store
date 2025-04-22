@@ -1,6 +1,7 @@
 package com.baedal.store.adapter.in.web.controller;
 
 import com.baedal.store.adapter.in.web.dto.response.DeliveryInfoResponse;
+import com.baedal.store.adapter.in.web.dto.response.ReviewInfoResponse;
 import com.baedal.store.adapter.in.web.mapper.StoreWebMapper;
 import com.baedal.store.application.command.DeliveryInfoCommand;
 import com.baedal.store.application.command.ReviewInfoCommand;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class StoreController {
 
   private final StoreWebMapper mapper;
+  
   private final StoreUseCase storeUseCase;
 
   @GetMapping("/deliveryInfo/{storeId}")
@@ -28,8 +30,8 @@ public class StoreController {
   }
 
   @GetMapping("/reviewInfo/{storeId}")
-  public ResponseEntity<?> reviewInfo(@PathVariable Long storeId) {
+  public ResponseEntity<ReviewInfoResponse> reviewInfo(@PathVariable Long storeId) {
     ReviewInfoCommand.Response response = storeUseCase.getReviewInfo(storeId);
-    return ResponseEntity.ok(response);
+    return ResponseEntity.ok(mapper.reviewInfoToResponse(response));
   }
 }
