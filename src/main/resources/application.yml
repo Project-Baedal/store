@@ -3,3 +3,7 @@ spring:
     name: store
   profiles:
     active: local
+
+security:
+  permit-all:
+    urls: /error
