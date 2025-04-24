@@ -1,5 +1,10 @@
 package com.baedal.store.application.service;
 
+import com.baedal.store.application.command.DeliveryInfoCommand;
+import com.baedal.store.application.command.ValidateOrderInfoCommand;
+import com.baedal.store.application.port.out.MessageSenderPort;
+import com.baedal.store.application.command.ReviewInfoCommand;
+import com.baedal.store.domain.business.StoreValidator;
 import com.baedal.store.application.command.AddStoreCommand;
 import com.baedal.store.application.command.DeliveryInfoCommand;
 import com.baedal.store.application.command.GetStoreDetailCommand;
@@ -20,6 +25,7 @@ public class StoreService implements StoreUseCase {
   private final StoreRepositoryPort storeRepositoryPort;
   private final StoreApplicationMapper mapper;
   private final StoreValidator validator;
+  private final MessageSenderPort messageSenderPort;
 
   @Transactional
   public void addStore(AddStoreCommand.Request req) {
@@ -39,6 +45,17 @@ public class StoreService implements StoreUseCase {
   }
 
   @Transactional(readOnly = true)
+  public void validateStoreOrderInfo(ValidateOrderInfoCommand.Request req) {
+
+    try {
+      Store store = storeRepositoryPort.findById(req.getStoreId());
+      validator.validateDeliveryAmount(store, req.getDeliveryAmount());
+      messageSenderPort.sendSuccessOrderValidate(req.getOrderTransactionId());
+    } catch (Exception e) {
+      messageSenderPort.sendFailOrderValidate(req.getOrderTransactionId(), e.getMessage());
+    }
+  }
+
   public ReviewInfoCommand.Response getReviewInfo(Long storeId) {
     Store store = storeRepositoryPort.findById(storeId);
     return mapper.getReviewInfoToResponse(store);
