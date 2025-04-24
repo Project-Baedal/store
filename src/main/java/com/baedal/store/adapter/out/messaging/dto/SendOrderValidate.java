@@ -8,11 +8,11 @@ public class SendOrderValidate {
 
   private String domain;
   private boolean status;
-  private String errorMessage;
+  private String message;
 
   @Builder
-  public SendOrderValidate(String errorMessage, boolean status) {
-    this.errorMessage = errorMessage;
+  public SendOrderValidate(String message, boolean status) {
+    this.message = message;
     this.status = status;
     this.domain = "STORE";
   }
