@@ -1,11 +1,9 @@
 package com.baedal.store.adapter.in.web.controller;
 
 import com.baedal.store.adapter.in.web.dto.response.DeliveryInfoResponse;
-import com.baedal.store.adapter.in.web.dto.response.ReviewInfoResponse;
 import com.baedal.store.adapter.in.web.mapper.StoreWebMapper;
 import com.baedal.store.application.command.DeliveryInfoCommand;
 import com.baedal.store.application.command.GetStoreDetailCommand;
-import com.baedal.store.application.command.ReviewInfoCommand;
 import com.baedal.store.application.port.in.StoreUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,13 +27,7 @@ public class StoreController {
     DeliveryInfoCommand.Response response = storeUseCase.getDeliveryInfo(command);
     return ResponseEntity.ok(mapper.deliveryInfoToResponse(response));
   }
-
-  @GetMapping("/reviewInfo/{storeId}")
-  public ResponseEntity<ReviewInfoResponse> reviewInfo(@PathVariable Long storeId) {
-    ReviewInfoCommand.Response response = storeUseCase.getReviewInfo(storeId);
-    return ResponseEntity.ok(mapper.reviewInfoToResponse(response));
-  }
-
+  
   @GetMapping("/v0/{storeId}")
   public ResponseEntity<GetStoreDetailCommand> getStoreDetail(@PathVariable Long storeId) {
     GetStoreDetailCommand response = storeUseCase.getStoreDetail(storeId);

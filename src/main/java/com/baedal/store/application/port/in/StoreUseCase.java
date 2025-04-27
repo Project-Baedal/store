@@ -4,7 +4,6 @@ import com.baedal.store.application.command.AddStoreCommand;
 import com.baedal.store.application.command.DeliveryInfoCommand;
 import com.baedal.store.application.command.GetStoreDetailCommand;
 import com.baedal.store.application.command.ValidateOrderInfoCommand;
-import com.baedal.store.application.command.ReviewInfoCommand;
 
 public interface StoreUseCase {
 
@@ -13,8 +12,6 @@ public interface StoreUseCase {
   DeliveryInfoCommand.Response getDeliveryInfo(DeliveryInfoCommand.Request req);
 
   void validateStoreOrderInfo(ValidateOrderInfoCommand.Request req);
-
-  ReviewInfoCommand.Response getReviewInfo(Long storeId);
 
   GetStoreDetailCommand getStoreDetail(Long storeId);
 }
