@@ -27,7 +27,7 @@ public class StoreController {
     DeliveryInfoCommand.Response response = storeUseCase.getDeliveryInfo(command);
     return ResponseEntity.ok(mapper.deliveryInfoToResponse(response));
   }
-  
+
   @GetMapping("/v0/{storeId}")
   public ResponseEntity<GetStoreDetailCommand> getStoreDetail(@PathVariable Long storeId) {
     GetStoreDetailCommand response = storeUseCase.getStoreDetail(storeId);

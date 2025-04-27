@@ -7,9 +7,12 @@ import com.baedal.store.application.command.ValidateOrderInfoCommand;
 import com.baedal.store.application.mapper.StoreApplicationMapper;
 import com.baedal.store.application.port.in.StoreUseCase;
 import com.baedal.store.application.port.out.MessageSenderPort;
+import com.baedal.store.application.port.out.ReviewPort;
 import com.baedal.store.application.port.out.StoreRepositoryPort;
 import com.baedal.store.domain.business.StoreValidator;
 import com.baedal.store.domain.model.Store;
+import com.baedal.store.domain.model.StoreReviewSummary;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,9 +22,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class StoreService implements StoreUseCase {
 
   private final StoreRepositoryPort storeRepositoryPort;
+
   private final StoreApplicationMapper mapper;
+
   private final StoreValidator validator;
+
   private final MessageSenderPort messageSenderPort;
+
+  private final ReviewPort reviewPort;
 
   @Transactional
   public void addStore(AddStoreCommand.Request req) {
@@ -55,6 +63,11 @@ public class StoreService implements StoreUseCase {
   @Transactional(readOnly = true)
   public GetStoreDetailCommand getStoreDetail(Long storeId) {
     Store store = storeRepositoryPort.findById(storeId);
-    return mapper.getStoreDetailToResponse(store);
+
+    List<StoreReviewSummary> top10Reviews = reviewPort.getTop10Reviews(storeId);
+
+    double averageScore = reviewPort.getAverageScore(storeId);
+
+    return mapper.getStoreDetailToResponse(store, top10Reviews, averageScore);
   }
 }

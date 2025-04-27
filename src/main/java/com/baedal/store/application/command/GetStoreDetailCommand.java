@@ -1,6 +1,8 @@
 package com.baedal.store.application.command;
 
+import com.baedal.store.domain.model.StoreReviewSummary;
 import java.time.LocalTime;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -27,4 +29,8 @@ public class GetStoreDetailCommand {
   private LocalTime closeTime;
 
   private int deliveryAmount;
+
+  private List<StoreReviewSummary> top10Reviews; // 추가
+
+  private double averageScore;
 }
