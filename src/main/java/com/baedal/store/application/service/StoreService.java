@@ -13,6 +13,8 @@ import com.baedal.store.domain.business.StoreValidator;
 import com.baedal.store.domain.model.Store;
 import com.baedal.store.domain.model.StoreReviewSummary;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,12 +64,26 @@ public class StoreService implements StoreUseCase {
 
   @Transactional(readOnly = true)
   public GetStoreDetailCommand getStoreDetail(Long storeId) {
-    Store store = storeRepositoryPort.findById(storeId);
+    CompletableFuture<Store> storeFuture = storeRepositoryPort.findByIdAsync(storeId);
 
-    List<StoreReviewSummary> top10Reviews = reviewPort.getTop10Reviews(storeId);
+    CompletableFuture<List<StoreReviewSummary>> top10ReviewsFuture =
+        reviewPort.getTop10Reviews(storeId);
 
-    double averageScore = reviewPort.getAverageScore(storeId);
+    CompletableFuture<Double> averageScoreFuture = reviewPort.getAverageScore(storeId);
 
-    return mapper.getStoreDetailToResponse(store, top10Reviews, averageScore);
+    CompletableFuture.allOf(
+        storeFuture,
+        top10ReviewsFuture,
+        averageScoreFuture);
+
+    try {
+      Store store = storeFuture.get();
+      List<StoreReviewSummary> top10Reviews = top10ReviewsFuture.get();
+      double averageScore = averageScoreFuture.get();
+
+      return mapper.getStoreDetailToResponse(store, top10Reviews, averageScore);
+    } catch (ExecutionException | InterruptedException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

@@ -2,10 +2,11 @@ package com.baedal.store.application.port.out;
 
 import com.baedal.store.domain.model.StoreReviewSummary;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface ReviewPort {
 
-  List<StoreReviewSummary> getTop10Reviews(Long storeId);
+  CompletableFuture<List<StoreReviewSummary>> getTop10Reviews(Long storeId);
 
-  double getAverageScore(Long storeId);
+  CompletableFuture<Double> getAverageScore(Long storeId);
 }
