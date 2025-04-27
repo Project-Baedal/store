@@ -1,15 +1,20 @@
 package com.baedal.store.application.service;
 
-import com.baedal.store.application.command.DeliveryInfoCommand;
-import com.baedal.store.application.command.ValidateOrderInfoCommand;
-import com.baedal.store.application.port.out.MessageSenderPort;
-import com.baedal.store.application.command.ReviewInfoCommand;
-import com.baedal.store.domain.business.StoreValidator;
 import com.baedal.store.application.command.AddStoreCommand;
+import com.baedal.store.application.command.DeliveryInfoCommand;
+import com.baedal.store.application.command.GetStoreDetailCommand;
+import com.baedal.store.application.command.ValidateOrderInfoCommand;
 import com.baedal.store.application.mapper.StoreApplicationMapper;
 import com.baedal.store.application.port.in.StoreUseCase;
+import com.baedal.store.application.port.out.MessageSenderPort;
+import com.baedal.store.application.port.out.ReviewPort;
 import com.baedal.store.application.port.out.StoreRepositoryPort;
+import com.baedal.store.domain.business.StoreValidator;
 import com.baedal.store.domain.model.Store;
+import com.baedal.store.domain.model.StoreReviewSummary;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,11 +24,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class StoreService implements StoreUseCase {
 
   private final StoreRepositoryPort storeRepositoryPort;
+
   private final StoreApplicationMapper mapper;
+
   private final StoreValidator validator;
+
   private final MessageSenderPort messageSenderPort;
 
-  @Override
+  private final ReviewPort reviewPort;
+
   @Transactional
   public void addStore(AddStoreCommand.Request req) {
 
@@ -34,14 +43,14 @@ public class StoreService implements StoreUseCase {
     storeRepositoryPort.save(store);
   }
 
-  @Override
+  @Transactional(readOnly = true)
   public DeliveryInfoCommand.Response getDeliveryInfo(DeliveryInfoCommand.Request req) {
 
     Store store = storeRepositoryPort.findById(req.getStoreId());
     return mapper.getDeliveryInfoToResponse(store);
   }
 
-  @Override
+  @Transactional(readOnly = true)
   public void validateStoreOrderInfo(ValidateOrderInfoCommand.Request req) {
 
     try {
@@ -53,9 +62,28 @@ public class StoreService implements StoreUseCase {
     }
   }
 
-  @Override
-  public ReviewInfoCommand.Response getReviewInfo(Long storeId) {
-    Store store = storeRepositoryPort.findById(storeId);
-    return mapper.getReviewInfoToResponse(store);
+  @Transactional(readOnly = true)
+  public GetStoreDetailCommand getStoreDetail(Long storeId) {
+    CompletableFuture<Store> storeFuture = storeRepositoryPort.findByIdAsync(storeId);
+
+    CompletableFuture<List<StoreReviewSummary>> top10ReviewsFuture =
+        reviewPort.getTop10Reviews(storeId);
+
+    CompletableFuture<Double> averageScoreFuture = reviewPort.getAverageScore(storeId);
+
+    CompletableFuture.allOf(
+        storeFuture,
+        top10ReviewsFuture,
+        averageScoreFuture);
+
+    try {
+      Store store = storeFuture.get();
+      List<StoreReviewSummary> top10Reviews = top10ReviewsFuture.get();
+      double averageScore = averageScoreFuture.get();
+
+      return mapper.getStoreDetailToResponse(store, top10Reviews, averageScore);
+    } catch (ExecutionException | InterruptedException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

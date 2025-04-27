@@ -9,5 +9,6 @@ public interface StoreWebMapper {
 
   // 배달 정보 조회
   DeliveryInfoCommand.Request deliveryInfoToCommand(Long storeId);
+
   DeliveryInfoResponse deliveryInfoToResponse(DeliveryInfoCommand.Response response);
 }
