@@ -82,13 +82,10 @@ public class StoreService implements StoreUseCase {
         top10ReviewsFuture,
         averageScoreFuture);
 
-    try {
-      Store store = storeFuture.get();
-      List<StoreReviewSummary> top10Reviews = top10ReviewsFuture.get();
-      double averageScore = averageScoreFuture.get();
     Store store = virtualThreadManager.extractResult(futureStore);
     List<StoreReviewSummary> top10Reviews = virtualThreadManager.extractResult(futureTop10Reviews);
     Double averageScore = virtualThreadManager.extractResult(futureAverageScore);
+    List<ProductInfo> products = virtualThreadManager.extractResult(futureProducts);
 
       return mapper.getStoreDetailToResponse(store, top10Reviews, averageScore);
     } catch (ExecutionException | InterruptedException e) {

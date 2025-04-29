@@ -3,6 +3,7 @@ package com.baedal.store.application.mapper;
 import com.baedal.store.application.command.AddStoreCommand;
 import com.baedal.store.application.command.DeliveryInfoCommand;
 import com.baedal.store.application.command.GetStoreDetailCommand;
+import com.baedal.store.domain.model.ProductInfo;
 import com.baedal.store.domain.model.Store;
 import com.baedal.store.domain.model.StoreReviewSummary;
 import java.util.List;
@@ -21,5 +22,7 @@ public interface StoreApplicationMapper {
   GetStoreDetailCommand getStoreDetailToResponse(
       Store store,
       List<StoreReviewSummary> top10Reviews,
-      double averageScore);
+      double averageScore,
+      List<ProductInfo> products
+  );
 }
