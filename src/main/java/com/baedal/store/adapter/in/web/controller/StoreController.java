@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/store") // FIXME: 이 부분 제거. gateway에서 짤림.
+@RequestMapping("/api/store/v0")
 @RequiredArgsConstructor
 public class StoreController {
 
@@ -28,7 +28,7 @@ public class StoreController {
     return ResponseEntity.ok(mapper.deliveryInfoToResponse(response));
   }
 
-  @GetMapping("/v0/{storeId}")
+  @GetMapping("/{storeId}")
   public ResponseEntity<GetStoreDetailCommand> getStoreDetail(@PathVariable Long storeId) {
     GetStoreDetailCommand response = storeUseCase.getStoreDetail(storeId);
     return ResponseEntity.ok(response);
