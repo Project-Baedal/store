@@ -31,6 +31,7 @@ public class GetStoreDetailCommand {
   private int deliveryAmount;
 
   private List<StoreReviewSummary> top10Reviews; // 추가
+  private List<StoreReviewCommand> top10Reviews;
 
   private double averageScore;
 }
