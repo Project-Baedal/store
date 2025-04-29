@@ -2,9 +2,10 @@ server:
   port: 8081
 
 services:
+  product:
+    url: http://localhost:8082/store
   review:
-    url: http://localhost:8086
-
+    url: http://localhost:8086/review
 spring:
   #
   #  datasource:
