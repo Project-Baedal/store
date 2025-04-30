@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://baedal-store:5432/store
+    username: baedal
+    password: baedal
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+  kafka:
+    consumer:
+      bootstrap-servers: baedal-kafka:9092
+    producer:
+      bootstrap-servers: baedal-kafka:9092
+
+
+services:
+  product:
+    url: http://product:8082/api/store/
+  review:
+    url: http://review:8086/api/review/
