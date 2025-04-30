@@ -8,5 +8,5 @@ import lombok.Getter;
 public class ProductInfoResponse {
   private Long id;
   private Long name;
-  private int price;
+  private Integer price;
 }
