@@ -77,19 +77,15 @@ public class StoreService implements StoreUseCase {
         reviewPort.getAverageScore(storeId)
     );
 
-    CompletableFuture.allOf(
-        storeFuture,
-        top10ReviewsFuture,
-        averageScoreFuture);
+    Future<List<ProductInfo>> futureProducts = virtualThreadManager.submitAsync(() ->
+        productPort.findProductsByStoreId(storeId)
+    );
 
     Store store = virtualThreadManager.extractResult(futureStore);
     List<StoreReviewSummary> top10Reviews = virtualThreadManager.extractResult(futureTop10Reviews);
     Double averageScore = virtualThreadManager.extractResult(futureAverageScore);
     List<ProductInfo> products = virtualThreadManager.extractResult(futureProducts);
 
-      return mapper.getStoreDetailToResponse(store, top10Reviews, averageScore);
-    } catch (ExecutionException | InterruptedException e) {
-      throw new RuntimeException(e);
-    }
+    return mapper.getStoreDetailToResponse(store, top10Reviews, averageScore, products);
   }
 }

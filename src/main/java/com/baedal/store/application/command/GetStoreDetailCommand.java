@@ -1,6 +1,5 @@
 package com.baedal.store.application.command;
 
-import com.baedal.store.domain.model.StoreReviewSummary;
 import java.time.LocalTime;
 import java.util.List;
 import lombok.Builder;
