@@ -7,14 +7,16 @@ import com.baedal.store.application.command.ValidateOrderInfoCommand;
 import com.baedal.store.application.mapper.StoreApplicationMapper;
 import com.baedal.store.application.port.in.StoreUseCase;
 import com.baedal.store.application.port.out.MessageSenderPort;
+import com.baedal.store.application.port.out.ProductPort;
 import com.baedal.store.application.port.out.ReviewPort;
 import com.baedal.store.application.port.out.StoreRepositoryPort;
 import com.baedal.store.domain.business.StoreValidator;
+import com.baedal.store.domain.business.VirtualThreadManager;
+import com.baedal.store.domain.model.ProductInfo;
 import com.baedal.store.domain.model.Store;
 import com.baedal.store.domain.model.StoreReviewSummary;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,15 +25,14 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class StoreService implements StoreUseCase {
 
+  private final VirtualThreadManager virtualThreadManager = new VirtualThreadManager();
+
   private final StoreRepositoryPort storeRepositoryPort;
-
   private final StoreApplicationMapper mapper;
-
   private final StoreValidator validator;
-
   private final MessageSenderPort messageSenderPort;
-
   private final ReviewPort reviewPort;
+  private final ProductPort productPort;
 
   @Transactional
   public void addStore(AddStoreCommand.Request req) {
@@ -64,26 +65,27 @@ public class StoreService implements StoreUseCase {
 
   @Transactional(readOnly = true)
   public GetStoreDetailCommand getStoreDetail(Long storeId) {
-    CompletableFuture<Store> storeFuture = storeRepositoryPort.findByIdAsync(storeId);
+    Future<Store> futureStore = virtualThreadManager.submitAsync(() ->
+        storeRepositoryPort.findById(storeId)
+    );
 
-    CompletableFuture<List<StoreReviewSummary>> top10ReviewsFuture =
-        reviewPort.getTop10Reviews(storeId);
+    Future<List<StoreReviewSummary>> futureTop10Reviews = virtualThreadManager.submitAsync(() ->
+        reviewPort.getTop10Reviews(storeId)
+    );
 
-    CompletableFuture<Double> averageScoreFuture = reviewPort.getAverageScore(storeId);
+    Future<Double> futureAverageScore = virtualThreadManager.submitAsync(() ->
+        reviewPort.getAverageScore(storeId)
+    );
 
-    CompletableFuture.allOf(
-        storeFuture,
-        top10ReviewsFuture,
-        averageScoreFuture);
+    Future<List<ProductInfo>> futureProducts = virtualThreadManager.submitAsync(() ->
+        productPort.findProductsByStoreId(storeId)
+    );
 
-    try {
-      Store store = storeFuture.get();
-      List<StoreReviewSummary> top10Reviews = top10ReviewsFuture.get();
-      double averageScore = averageScoreFuture.get();
+    Store store = virtualThreadManager.extractResult(futureStore);
+    List<StoreReviewSummary> top10Reviews = virtualThreadManager.extractResult(futureTop10Reviews);
+    Double averageScore = virtualThreadManager.extractResult(futureAverageScore);
+    List<ProductInfo> products = virtualThreadManager.extractResult(futureProducts);
 
-      return mapper.getStoreDetailToResponse(store, top10Reviews, averageScore);
-    } catch (ExecutionException | InterruptedException e) {
-      throw new RuntimeException(e);
-    }
+    return mapper.getStoreDetailToResponse(store, top10Reviews, averageScore, products);
   }
 }
