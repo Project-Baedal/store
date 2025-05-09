@@ -1,8 +1,9 @@
 spring:
   application:
     name: store
-  profiles:
-    active: local
+
+server:
+  port: 8081
 
 security:
   permit-all:
