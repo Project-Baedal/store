@@ -19,7 +19,7 @@ public class StoreOrderService {
 
   private final OrderApprovalValidator validator;
 
-  @Transactional
+  @Transactional(readOnly = true)
   public void acceptOrder(Long storeId, Long orderId, Long userId) {
     Store store = storeRepositoryPort.findById(storeId);
     Order order = orderPort.findById(orderId);
@@ -31,7 +31,7 @@ public class StoreOrderService {
     orderPort.accept(orderId);
   }
 
-  @Transactional
+  @Transactional(readOnly = true)
   public void denyOrder(Long storeId, Long orderId, Long userId) {
     Store store = storeRepositoryPort.findById(storeId);
     Order order = orderPort.findById(orderId);
