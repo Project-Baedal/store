@@ -1,5 +1,6 @@
 package com.baedal.store.application.service;
 
+import com.baedal.store.application.port.out.OrderCommandPort;
 import com.baedal.store.application.port.out.OrderPort;
 import com.baedal.store.application.port.out.StoreRepositoryPort;
 import com.baedal.store.domain.business.OrderApprovalValidator;
@@ -15,6 +16,8 @@ public class StoreOrderService {
 
   private final OrderPort orderPort;
 
+  private final OrderCommandPort orderCommandPort;
+
   private final StoreRepositoryPort storeRepositoryPort;
 
   private final OrderApprovalValidator validator;
@@ -28,7 +31,7 @@ public class StoreOrderService {
     validator.validateOrder(store, order, userId);
 
     // 주문 승인/거절 위임
-    orderPort.accept(orderId);
+    orderCommandPort.accept(orderId);
   }
 
   @Transactional(readOnly = true)
@@ -38,6 +41,6 @@ public class StoreOrderService {
 
     validator.validateOrder(store, order, userId);
 
-    orderPort.deny(orderId);
+    orderCommandPort.deny(orderId);
   }
 }
