@@ -6,8 +6,6 @@ spring:
     driver-class-name: org.postgresql.Driver
 
   jpa:
-    hibernate:
-      ddl-auto: update
     properties:
       hibernate:
         show_sql: true
@@ -22,6 +20,8 @@ spring:
 
 services:
   product:
-    url: http://product:8082/api/store/
+    url: http://store:8082/api/store
   review:
-    url: http://review:8086/api/review/
+    url: http://review:8086/api/review
+  order:
+    url: http://order:8084/api/order
