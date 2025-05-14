@@ -1,10 +1,10 @@
 services:
   product:
-    url: http://localhost:8082/api/store
+    url: http://store:8082/api/store
   review:
-    url: http://localhost:8086/api/review
+    url: http://review:8086/api/review
   order:
-    url: http://localhost:8084/api/order
+    url: http://order:8084/api/order
 
 spring:
   jpa:

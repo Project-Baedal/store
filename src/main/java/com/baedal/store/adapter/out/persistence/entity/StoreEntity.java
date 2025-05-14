@@ -26,6 +26,9 @@ public class StoreEntity {
   private Long id;
 
   @Column(nullable = false)
+  private Long ownerId;
+
+  @Column(nullable = false)
   private String name;
 
   private String title;
