@@ -3,6 +3,8 @@ package com.baedal.store.application.service;
 import com.baedal.store.application.command.AddStoreCommand;
 import com.baedal.store.application.command.DeliveryInfoCommand;
 import com.baedal.store.application.command.GetStoreDetailCommand;
+import com.baedal.store.application.command.SearchNameCommand.Request;
+import com.baedal.store.application.command.SearchNameCommand.Response;
 import com.baedal.store.application.command.ValidateOrderInfoCommand;
 import com.baedal.store.application.mapper.StoreApplicationMapper;
 import com.baedal.store.application.port.in.StoreUseCase;
@@ -10,6 +12,7 @@ import com.baedal.store.application.port.out.MessageSenderPort;
 import com.baedal.store.application.port.out.ProductPort;
 import com.baedal.store.application.port.out.ReviewPort;
 import com.baedal.store.application.port.out.StoreRepositoryPort;
+import com.baedal.store.application.port.out.StoreSearchRepositoryPort;
 import com.baedal.store.domain.business.StoreValidator;
 import com.baedal.store.domain.business.VirtualThreadManager;
 import com.baedal.store.domain.model.ProductInfo;
@@ -33,6 +36,7 @@ public class StoreService implements StoreUseCase {
   private final MessageSenderPort messageSenderPort;
   private final ReviewPort reviewPort;
   private final ProductPort productPort;
+  private final StoreSearchRepositoryPort storeSearchRepositoryPort;
 
   @Transactional
   public void addStore(AddStoreCommand.Request req) {
@@ -87,5 +91,11 @@ public class StoreService implements StoreUseCase {
     List<ProductInfo> products = virtualThreadManager.extractResult(futureProducts);
 
     return mapper.getStoreDetailToResponse(store, top10Reviews, averageScore, products);
+  }
+
+  @Override
+  public List<Response> getSearchName(Request req) {
+    List<Store> store = storeSearchRepositoryPort.findByNameContaining(req.getName());
+    return mapper.searchNameToResponse(store);
   }
 }

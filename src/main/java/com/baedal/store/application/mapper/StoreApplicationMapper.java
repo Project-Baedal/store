@@ -3,6 +3,7 @@ package com.baedal.store.application.mapper;
 import com.baedal.store.application.command.AddStoreCommand;
 import com.baedal.store.application.command.DeliveryInfoCommand;
 import com.baedal.store.application.command.GetStoreDetailCommand;
+import com.baedal.store.application.command.SearchNameCommand;
 import com.baedal.store.domain.model.ProductInfo;
 import com.baedal.store.domain.model.Store;
 import com.baedal.store.domain.model.StoreReviewSummary;
@@ -25,4 +26,7 @@ public interface StoreApplicationMapper {
       double averageScore,
       List<ProductInfo> products
   );
+
+  // 매장명 검색
+  List<SearchNameCommand.Response> searchNameToResponse(List<Store> store);
 }
