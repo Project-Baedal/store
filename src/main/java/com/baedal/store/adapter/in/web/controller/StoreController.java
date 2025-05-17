@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -64,8 +65,8 @@ public class StoreController {
     return ResponseEntity.noContent().build();
   }
 
-  @GetMapping("/searchName/{name}")
-  public ResponseEntity<List<SearchNameResponse>> searchName(@PathVariable String name) {
+  @GetMapping("/searchName")
+  public ResponseEntity<List<SearchNameResponse>> searchName(@RequestPart String name) {
     SearchNameCommand.Request req = mapper.searchNameToCommand(name);
     List<SearchNameCommand.Response> response = storeUseCase.getSearchName(req);
     return ResponseEntity.ok(mapper.searchNameToResponse(response));
