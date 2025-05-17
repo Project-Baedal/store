@@ -20,7 +20,7 @@ spring:
 
 services:
   product:
-    url: http://store:8082/api/store
+    url: http://product:8082/api/product
   review:
     url: http://review:8086/api/review
   order:
