@@ -18,3 +18,8 @@ spring:
       bootstrap-servers: localhost:10000
     producer:
       bootstrap-servers: localhost:10000
+
+  elasticsearch:
+    host: localhost
+
+

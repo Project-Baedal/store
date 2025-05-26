@@ -17,6 +17,9 @@ spring:
     producer:
       bootstrap-servers: baedal-kafka:9092
 
+  elasticsearch:
+    host: baedal-elasticsearch
+
 
 services:
   product:
