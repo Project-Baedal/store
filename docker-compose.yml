@@ -15,6 +15,11 @@ services:
   elasticsearch:
     image: elasticsearch:9.0.1
     container_name: elasticsearch-store
+    command: >
+      /bin/bash -c "
+      elasticsearch-plugin install analysis-nori --batch &&
+      elasticsearch
+      "
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
