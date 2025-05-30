@@ -1,10 +1,13 @@
 package com.baedal.store.adapter.in.web.controller;
 
 import com.baedal.store.adapter.in.web.dto.response.DeliveryInfoResponse;
+import com.baedal.store.adapter.in.web.dto.response.SearchNameResponse;
 import com.baedal.store.adapter.in.web.mapper.StoreWebMapper;
 import com.baedal.store.application.command.DeliveryInfoCommand;
 import com.baedal.store.application.command.GetStoreDetailCommand;
+import com.baedal.store.application.command.SearchNameCommand;
 import com.baedal.store.application.port.in.StoreUseCase;
+import java.util.List;
 import com.baedal.store.application.service.StoreOrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -59,5 +63,12 @@ public class StoreController {
       @PathVariable Long orderId) {
     storeOrderService.denyOrder(storeId, orderId, userId);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/searchName")
+  public ResponseEntity<List<SearchNameResponse>> searchName(@RequestPart String name) {
+    SearchNameCommand.Request req = mapper.searchNameToCommand(name);
+    List<SearchNameCommand.Response> response = storeUseCase.getSearchName(req);
+    return ResponseEntity.ok(mapper.searchNameToResponse(response));
   }
 }

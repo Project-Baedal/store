@@ -1,12 +1,10 @@
-services:
-  product:
-    url: http://store:8082/api/store
-  review:
-    url: http://review:8086/api/review
-  order:
-    url: http://order:8084/api/order
-
 spring:
+  datasource:
+    url: jdbc:postgresql://baedal:5432/baedal-store
+    username: baedal
+    password: baedal
+    driver-class-name: org.postgresql.Driver
+
   jpa:
     properties:
       hibernate:
@@ -15,6 +13,18 @@ spring:
 
   kafka:
     consumer:
-      bootstrap-servers: localhost:10000
+      bootstrap-servers: baedal-kafka:9092
     producer:
-      bootstrap-servers: localhost:10000
+      bootstrap-servers: baedal-kafka:9092
+
+  elasticsearch:
+    host: baedal-elasticsearch
+
+
+services:
+  product:
+    url: http://product:8082/api/product
+  review:
+    url: http://review:8086/api/review
+  order:
+    url: http://order:8084/api/order
