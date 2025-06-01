@@ -19,13 +19,18 @@ import com.baedal.store.domain.model.ProductInfo;
 import com.baedal.store.domain.model.Store;
 import com.baedal.store.domain.model.StoreReviewSummary;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.StructuredTaskScope;
+import java.util.concurrent.StructuredTaskScope.Subtask;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class StoreService implements StoreUseCase {
 
   private final VirtualThreadManager virtualThreadManager = new VirtualThreadManager();
@@ -68,7 +73,7 @@ public class StoreService implements StoreUseCase {
   }
 
   @Transactional(readOnly = true)
-  public GetStoreDetailCommand getStoreDetail(Long storeId) {
+  public GetStoreDetailCommand getStoreDetailV0(Long storeId) {
     Future<Store> futureStore = virtualThreadManager.submitAsync(() ->
         storeRepositoryPort.findById(storeId)
     );
@@ -91,6 +96,41 @@ public class StoreService implements StoreUseCase {
     List<ProductInfo> products = virtualThreadManager.extractResult(futureProducts);
 
     return mapper.getStoreDetailToResponse(store, top10Reviews, averageScore, products);
+  }
+
+  @Transactional(readOnly = true)
+  public GetStoreDetailCommand getStoreDetail(Long storeId) {
+    try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+      Subtask<Store> store = scope.fork(() ->
+          storeRepositoryPort.findById(storeId));
+
+      Subtask<List<StoreReviewSummary>> top10Reviews = scope.fork(
+          () -> reviewPort.getTop10Reviews(storeId));
+
+      Subtask<Double> averageScore = scope.fork(() ->
+          reviewPort.getAverageScore(storeId));
+
+      Subtask<List<ProductInfo>> products = scope.fork(() ->
+          productPort.findProductsByStoreId(storeId));
+
+      scope.join()
+          .throwIfFailed();
+
+      return mapper.getStoreDetailToResponse(
+          store.get(),
+          top10Reviews.get(),
+          averageScore.get(),
+          products.get()
+      );
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      log.debug("인터럽트 발생: [{}]", e.toString());
+      throw new RuntimeException("스레드 인터럽트 발생", e);
+    } catch (ExecutionException e) {
+      Throwable cause = e.getCause();
+      log.debug("비동기 작업 중 예외 발생: [{}]", cause.toString());
+      throw new RuntimeException("비동기 작업 실패", cause);
+    }
   }
 
   @Override
