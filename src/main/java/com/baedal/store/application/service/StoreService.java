@@ -18,15 +18,15 @@ import com.baedal.store.domain.business.VirtualThreadManager;
 import com.baedal.store.domain.model.ProductInfo;
 import com.baedal.store.domain.model.Store;
 import com.baedal.store.domain.model.StoreReviewSummary;
+import com.baedal.store.util.StructuredTaskUtil;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.StructuredTaskScope;
+import java.util.concurrent.StructuredTaskScope.ShutdownOnFailure;
 import java.util.concurrent.StructuredTaskScope.Subtask;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.function.ThrowingFunction;
 
 @Service
 @RequiredArgsConstructor
@@ -73,34 +73,8 @@ public class StoreService implements StoreUseCase {
   }
 
   @Transactional(readOnly = true)
-  public GetStoreDetailCommand getStoreDetailV0(Long storeId) {
-    Future<Store> futureStore = virtualThreadManager.submitAsync(() ->
-        storeRepositoryPort.findById(storeId)
-    );
-
-    Future<List<StoreReviewSummary>> futureTop10Reviews = virtualThreadManager.submitAsync(() ->
-        reviewPort.getTop10Reviews(storeId)
-    );
-
-    Future<Double> futureAverageScore = virtualThreadManager.submitAsync(() ->
-        reviewPort.getAverageScore(storeId)
-    );
-
-    Future<List<ProductInfo>> futureProducts = virtualThreadManager.submitAsync(() ->
-        productPort.findProductsByStoreId(storeId)
-    );
-
-    Store store = virtualThreadManager.extractResult(futureStore);
-    List<StoreReviewSummary> top10Reviews = virtualThreadManager.extractResult(futureTop10Reviews);
-    Double averageScore = virtualThreadManager.extractResult(futureAverageScore);
-    List<ProductInfo> products = virtualThreadManager.extractResult(futureProducts);
-
-    return mapper.getStoreDetailToResponse(store, top10Reviews, averageScore, products);
-  }
-
-  @Transactional(readOnly = true)
   public GetStoreDetailCommand getStoreDetail(Long storeId) {
-    try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+    ThrowingFunction<ShutdownOnFailure, GetStoreDetailCommand> function = (ShutdownOnFailure scope) -> {
       Subtask<Store> store = scope.fork(() ->
           storeRepositoryPort.findById(storeId));
 
@@ -116,21 +90,17 @@ public class StoreService implements StoreUseCase {
       scope.join()
           .throwIfFailed();
 
-      return mapper.getStoreDetailToResponse(
+      GetStoreDetailCommand result = mapper.getStoreDetailToResponse(
           store.get(),
           top10Reviews.get(),
           averageScore.get(),
           products.get()
       );
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      log.debug("인터럽트 발생: [{}]", e.toString());
-      throw new RuntimeException("스레드 인터럽트 발생", e);
-    } catch (ExecutionException e) {
-      Throwable cause = e.getCause();
-      log.debug("비동기 작업 중 예외 발생: [{}]", cause.toString());
-      throw new RuntimeException("비동기 작업 실패", cause);
-    }
+
+      return result;
+    };
+
+    return StructuredTaskUtil.shutdownOnFailure(function);
   }
 
   @Override

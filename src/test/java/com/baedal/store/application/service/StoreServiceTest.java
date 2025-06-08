@@ -1,6 +1,7 @@
 package com.baedal.store.application.service;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -13,10 +14,7 @@ import com.baedal.store.application.port.out.StoreRepositoryPort;
 import com.baedal.store.domain.model.ProductInfo;
 import com.baedal.store.domain.model.Store;
 import com.baedal.store.domain.model.StoreReviewSummary;
-import io.micrometer.observation.Observation.CheckedCallable;
 import java.util.List;
-import java.util.concurrent.Callable;
-import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -83,7 +81,7 @@ class StoreServiceTest {
     long storeId = 1L;
     Store store = mock(Store.class);
     when(storeRepositoryPort.findById(storeId))
-        .thenThrow(RuntimeException.class);
+        .thenThrow(new RuntimeException("Store not found"));
 
     List<StoreReviewSummary> reviews = mock(List.class);
     when(reviewPort.getTop10Reviews(storeId)).thenReturn(
@@ -105,7 +103,8 @@ class StoreServiceTest {
 
     // THEN
     assertThatThrownBy(callable)
-        .isInstanceOf(RuntimeException.class);
+        .isInstanceOf(RuntimeException.class)
+        .hasMessage("비동기 작업 실패");
 
     verifyNoInteractions(mapper);
   }
