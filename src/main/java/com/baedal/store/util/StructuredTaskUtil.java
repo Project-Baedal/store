@@ -13,7 +13,10 @@ public class StructuredTaskUtil {
     try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
       return function.apply(scope);
     } catch (Exception e) {
-      throw handleException(e.getCause());
+      if (e.getCause() != null) {
+        throw handleException(e.getCause());
+      }
+      throw handleException(e);
     }
   }
 
