@@ -20,6 +20,7 @@ import com.baedal.store.domain.model.Store;
 import com.baedal.store.domain.model.StoreReviewSummary;
 import com.baedal.store.util.StructuredTaskUtil;
 import java.util.List;
+import java.util.concurrent.Future;
 import java.util.concurrent.StructuredTaskScope.ShutdownOnFailure;
 import java.util.concurrent.StructuredTaskScope.Subtask;
 import lombok.RequiredArgsConstructor;
@@ -102,6 +103,34 @@ public class StoreService implements StoreUseCase {
 
     return StructuredTaskUtil.shutdownOnFailure(function);
   }
+
+
+  @Transactional(readOnly = true)
+  public GetStoreDetailCommand getStoreDetailV0(Long storeId) {
+    Future<Store> futureStore = virtualThreadManager.submitAsync(() ->
+        storeRepositoryPort.findById(storeId)
+    );
+
+    Future<List<StoreReviewSummary>> futureTop10Reviews = virtualThreadManager.submitAsync(() ->
+        reviewPort.getTop10Reviews(storeId)
+    );
+
+    Future<Double> futureAverageScore = virtualThreadManager.submitAsync(() ->
+        reviewPort.getAverageScore(storeId)
+    );
+
+    Future<List<ProductInfo>> futureProducts = virtualThreadManager.submitAsync(() ->
+        productPort.findProductsByStoreId(storeId)
+    );
+
+    Store store = virtualThreadManager.extractResult(futureStore);
+    List<StoreReviewSummary> top10Reviews = virtualThreadManager.extractResult(futureTop10Reviews);
+    Double averageScore = virtualThreadManager.extractResult(futureAverageScore);
+    List<ProductInfo> products = virtualThreadManager.extractResult(futureProducts);
+
+    return mapper.getStoreDetailToResponse(store, top10Reviews, averageScore, products);
+  }
+
 
   @Override
   public List<Response> getSearchName(Request req) {
