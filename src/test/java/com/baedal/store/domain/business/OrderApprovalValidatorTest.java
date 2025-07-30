@@ -1,8 +1,9 @@
 package com.baedal.store.domain.business;
 
-import com.baedal.store.domain.model.Order;
-import com.baedal.store.domain.model.OrderStatus;
-import com.baedal.store.domain.model.Store;
+import com.baedal.store.java.domain.business.OrderApprovalValidator;
+import com.baedal.store.java.domain.model.Order;
+import com.baedal.store.java.domain.model.OrderStatus;
+import com.baedal.store.java.domain.model.Store;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
