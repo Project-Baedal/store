@@ -18,14 +18,20 @@ import com.baedal.store.java.domain.business.VirtualThreadManager;
 import com.baedal.store.java.domain.model.ProductInfo;
 import com.baedal.store.java.domain.model.Store;
 import com.baedal.store.java.domain.model.StoreReviewSummary;
+import com.baedal.store.java.util.StructuredTaskUtil;
 import java.util.List;
 import java.util.concurrent.Future;
+import java.util.concurrent.StructuredTaskScope.ShutdownOnFailure;
+import java.util.concurrent.StructuredTaskScope.Subtask;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.function.ThrowingFunction;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class StoreService implements StoreUseCase {
 
   private final VirtualThreadManager virtualThreadManager = new VirtualThreadManager();
@@ -69,6 +75,38 @@ public class StoreService implements StoreUseCase {
 
   @Transactional(readOnly = true)
   public GetStoreDetailCommand getStoreDetail(Long storeId) {
+    ThrowingFunction<ShutdownOnFailure, GetStoreDetailCommand> function = (ShutdownOnFailure scope) -> {
+      Subtask<Store> store = scope.fork(() ->
+          storeRepositoryPort.findById(storeId));
+
+      Subtask<List<StoreReviewSummary>> top10Reviews = scope.fork(
+          () -> reviewPort.getTop10Reviews(storeId));
+
+      Subtask<Double> averageScore = scope.fork(() ->
+          reviewPort.getAverageScore(storeId));
+
+      Subtask<List<ProductInfo>> products = scope.fork(() ->
+          productPort.findProductsByStoreId(storeId));
+
+      scope.join()
+          .throwIfFailed();
+
+      GetStoreDetailCommand result = mapper.getStoreDetailToResponse(
+          store.get(),
+          top10Reviews.get(),
+          averageScore.get(),
+          products.get()
+      );
+
+      return result;
+    };
+
+    return StructuredTaskUtil.shutdownOnFailure(function);
+  }
+
+
+  @Transactional(readOnly = true)
+  public GetStoreDetailCommand getStoreDetailV0(Long storeId) {
     Future<Store> futureStore = virtualThreadManager.submitAsync(() ->
         storeRepositoryPort.findById(storeId)
     );
@@ -92,6 +130,7 @@ public class StoreService implements StoreUseCase {
 
     return mapper.getStoreDetailToResponse(store, top10Reviews, averageScore, products);
   }
+
 
   @Override
   public List<Response> getSearchName(Request req) {

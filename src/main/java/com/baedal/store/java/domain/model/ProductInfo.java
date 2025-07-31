@@ -8,6 +8,6 @@ import lombok.Getter;
 public class ProductInfo {
 
   private Long id;
-  private Long name;
-  private int price;
+  private String name;
+  private Integer price;
 }

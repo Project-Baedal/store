@@ -1,6 +1,5 @@
 package com.baedal.store.java.adapter.in.web.controller;
 
-import com.baedal.store.kotlin.TestService;
 import com.baedal.store.java.adapter.in.web.dto.response.DeliveryInfoResponse;
 import com.baedal.store.java.adapter.in.web.dto.response.SearchNameResponse;
 import com.baedal.store.java.adapter.in.web.mapper.StoreWebMapper;
@@ -8,8 +7,8 @@ import com.baedal.store.java.application.command.DeliveryInfoCommand;
 import com.baedal.store.java.application.command.GetStoreDetailCommand;
 import com.baedal.store.java.application.command.SearchNameCommand;
 import com.baedal.store.java.application.port.in.StoreUseCase;
-import java.util.List;
 import com.baedal.store.java.application.service.StoreOrderService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -71,12 +70,5 @@ public class StoreController {
     SearchNameCommand.Request req = mapper.searchNameToCommand(name);
     List<SearchNameCommand.Response> response = storeUseCase.getSearchName(req);
     return ResponseEntity.ok(mapper.searchNameToResponse(response));
-  }
-
-  private final TestService testService;
-
-  @GetMapping("/test")
-  public String test() {
-    return testService.a();
   }
 }
