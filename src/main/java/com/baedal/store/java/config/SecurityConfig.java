@@ -40,7 +40,7 @@ public class SecurityConfig {
 
         .authorizeHttpRequests((auth) -> auth
             .requestMatchers(permitAllUrls).permitAll()
-            .anyRequest().authenticated())
+            .anyRequest().permitAll())
         .build();
   }
 
