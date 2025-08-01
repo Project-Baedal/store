@@ -2,10 +2,10 @@ package com.baedal.store.java.application.service;
 
 import com.baedal.store.java.application.port.out.OrderCommandPort;
 import com.baedal.store.java.application.port.out.OrderPort;
-import com.baedal.store.java.application.port.out.StoreRepositoryPort;
 import com.baedal.store.java.domain.business.OrderApprovalValidator;
 import com.baedal.store.java.domain.model.Order;
-import com.baedal.store.java.domain.model.Store;
+import com.baedal.store.kotlin.application.port.out.StoreRepositoryPort;
+import com.baedal.store.kotlin.domain.model.Store;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

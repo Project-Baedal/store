@@ -2,7 +2,7 @@ package com.baedal.store.java.domain.business;
 
 import com.baedal.store.java.domain.model.Order;
 import com.baedal.store.java.domain.model.OrderStatus;
-import com.baedal.store.java.domain.model.Store;
+import com.baedal.store.kotlin.domain.model.Store;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,7 +16,7 @@ public class OrderApprovalValidator {
 
   private void validateStoreOwner(Store store, Long userId) {
     //  - 검증1. store가 owner의 것 인지
-    if (!store.getOwnerId().equals(userId)) {
+    if (store.getOwnerId() != userId) {
       throw new RuntimeException("매장의 주인만 접근 가능합니다.");
     }
   }

@@ -1,6 +1,6 @@
 package com.baedal.store.java.domain.business;
 
-import com.baedal.store.java.domain.model.Store;
+import com.baedal.store.kotlin.domain.model.Store;
 import java.time.LocalTime;
 import org.springframework.stereotype.Component;
 

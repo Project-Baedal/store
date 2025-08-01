@@ -2,11 +2,11 @@ package com.baedal.store.java.application.mapper;
 
 import com.baedal.store.java.application.command.AddStoreCommand;
 import com.baedal.store.java.application.command.DeliveryInfoCommand;
-import com.baedal.store.java.application.command.GetStoreDetailCommand;
 import com.baedal.store.java.application.command.SearchNameCommand;
-import com.baedal.store.java.domain.model.ProductInfo;
-import com.baedal.store.java.domain.model.Store;
-import com.baedal.store.java.domain.model.StoreReviewSummary;
+import com.baedal.store.kotlin.application.command.GetStoreDetailCommand;
+import com.baedal.store.kotlin.domain.model.ProductInfo;
+import com.baedal.store.kotlin.domain.model.Store;
+import com.baedal.store.kotlin.domain.model.StoreReviewSummary;
 import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -20,10 +20,10 @@ public interface StoreApplicationMapper {
   DeliveryInfoCommand.Response getDeliveryInfoToResponse(Store store);
 
   @Mapping(target = "storeId", source = "store.id")
-  GetStoreDetailCommand getStoreDetailToResponse(
+  GetStoreDetailCommand toCommand(
       Store store,
       List<StoreReviewSummary> top10Reviews,
-      double averageScore,
+      Double averageScore,
       List<ProductInfo> products
   );
 
