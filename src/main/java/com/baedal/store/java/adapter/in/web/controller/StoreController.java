@@ -5,7 +5,6 @@ import com.baedal.store.java.adapter.in.web.dto.response.DeliveryInfoResponse;
 import com.baedal.store.java.adapter.in.web.dto.response.SearchNameResponse;
 import com.baedal.store.java.adapter.in.web.mapper.StoreWebMapper;
 import com.baedal.store.java.application.command.DeliveryInfoCommand;
-import com.baedal.store.java.application.command.GetStoreDetailCommand;
 import com.baedal.store.java.application.command.SearchNameCommand;
 import com.baedal.store.java.application.port.in.StoreUseCase;
 import java.util.List;
@@ -37,12 +36,6 @@ public class StoreController {
     DeliveryInfoCommand.Request command = mapper.deliveryInfoToCommand(storeId);
     DeliveryInfoCommand.Response response = storeUseCase.getDeliveryInfo(command);
     return ResponseEntity.ok(mapper.deliveryInfoToResponse(response));
-  }
-
-  @GetMapping("/{storeId}")
-  public ResponseEntity<GetStoreDetailCommand> getStoreDetail(@PathVariable Long storeId) {
-    GetStoreDetailCommand response = storeUseCase.getStoreDetail(storeId);
-    return ResponseEntity.ok(response);
   }
 
 

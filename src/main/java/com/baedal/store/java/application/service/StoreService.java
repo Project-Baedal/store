@@ -2,24 +2,17 @@ package com.baedal.store.java.application.service;
 
 import com.baedal.store.java.application.command.AddStoreCommand;
 import com.baedal.store.java.application.command.DeliveryInfoCommand;
-import com.baedal.store.java.application.command.GetStoreDetailCommand;
 import com.baedal.store.java.application.command.SearchNameCommand.Request;
 import com.baedal.store.java.application.command.SearchNameCommand.Response;
 import com.baedal.store.java.application.command.ValidateOrderInfoCommand;
 import com.baedal.store.java.application.mapper.StoreApplicationMapper;
 import com.baedal.store.java.application.port.in.StoreUseCase;
 import com.baedal.store.java.application.port.out.MessageSenderPort;
-import com.baedal.store.java.application.port.out.ProductPort;
-import com.baedal.store.java.application.port.out.ReviewPort;
-import com.baedal.store.java.application.port.out.StoreRepositoryPort;
 import com.baedal.store.java.application.port.out.StoreSearchRepositoryPort;
 import com.baedal.store.java.domain.business.StoreValidator;
-import com.baedal.store.java.domain.business.VirtualThreadManager;
-import com.baedal.store.java.domain.model.ProductInfo;
-import com.baedal.store.java.domain.model.Store;
-import com.baedal.store.java.domain.model.StoreReviewSummary;
+import com.baedal.store.kotlin.application.port.out.StoreRepositoryPort;
+import com.baedal.store.kotlin.domain.model.Store;
 import java.util.List;
-import java.util.concurrent.Future;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,14 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class StoreService implements StoreUseCase {
 
-  private final VirtualThreadManager virtualThreadManager = new VirtualThreadManager();
-
   private final StoreRepositoryPort storeRepositoryPort;
   private final StoreApplicationMapper mapper;
   private final StoreValidator validator;
   private final MessageSenderPort messageSenderPort;
-  private final ReviewPort reviewPort;
-  private final ProductPort productPort;
   private final StoreSearchRepositoryPort storeSearchRepositoryPort;
 
   @Transactional
@@ -65,32 +54,6 @@ public class StoreService implements StoreUseCase {
     } catch (Exception e) {
       messageSenderPort.sendFailOrderValidate(req.getOrderTransactionId(), e.getMessage());
     }
-  }
-
-  @Transactional(readOnly = true)
-  public GetStoreDetailCommand getStoreDetail(Long storeId) {
-    Future<Store> futureStore = virtualThreadManager.submitAsync(() ->
-        storeRepositoryPort.findById(storeId)
-    );
-
-    Future<List<StoreReviewSummary>> futureTop10Reviews = virtualThreadManager.submitAsync(() ->
-        reviewPort.getTop10Reviews(storeId)
-    );
-
-    Future<Double> futureAverageScore = virtualThreadManager.submitAsync(() ->
-        reviewPort.getAverageScore(storeId)
-    );
-
-    Future<List<ProductInfo>> futureProducts = virtualThreadManager.submitAsync(() ->
-        productPort.findProductsByStoreId(storeId)
-    );
-
-    Store store = virtualThreadManager.extractResult(futureStore);
-    List<StoreReviewSummary> top10Reviews = virtualThreadManager.extractResult(futureTop10Reviews);
-    Double averageScore = virtualThreadManager.extractResult(futureAverageScore);
-    List<ProductInfo> products = virtualThreadManager.extractResult(futureProducts);
-
-    return mapper.getStoreDetailToResponse(store, top10Reviews, averageScore, products);
   }
 
   @Override
